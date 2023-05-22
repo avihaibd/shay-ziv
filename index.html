@@ -76,6 +76,9 @@
   <script>
     var slides = document.getElementsByClassName("slide");
     var currentSlide = 0;
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var touchThreshold = 100;
 
     function showSlide(slideIndex) {
       if (slideIndex < 0 || slideIndex >= slides.length) {
@@ -133,13 +136,41 @@
         } else if (target.classList.contains("arrow-right") || target.parentNode.classList.contains("arrow-right")) {
           nextSlide();
         }
-      } else {
+      } else { 
         nextSlide();
       }
     });
 
-    showSlide(0);
+    document.addEventListener("touchstart", function(event) {
+      touchStartX = event.changedTouches[0].screenX;
+    });
 
+    document.addEventListener("touchend", function(event) {
+      touchEndX = event.changedTouches[0].screenX;
+      handleSwipe();
+    });
+
+    function handleSwipe() {
+      var swipeDistance = touchEndX - touchStartX;
+      if (swipeDistance > touchThreshold) {
+        previousSlide();
+      } else if (swipeDistance < -touchThreshold) {
+        nextSlide();
+      }
+    }
+
+    var arrowLeft = document.querySelector(".arrow-left");
+    var arrowRight = document.querySelector(".arrow-right");
+
+    arrowLeft.addEventListener("click", function() {
+      previousSlide();
+    });
+
+    arrowRight.addEventListener("click", function() {
+      nextSlide();
+    });
+
+    showSlide(0);
   </script>
 </body>
 </html>
